@@ -1,25 +1,61 @@
-import { StatusBar } from 'expo-status-bar';
-import { Text, View, TouchableOpacity } from 'react-native';
+import { Text, View, TouchableOpacity, Pressable, SafeAreaView, FlatList, Image} from 'react-native';
+import React, { useState, useEffect} from "react";
+import { firebase } from "../firebase";
+import { gStyle } from '../gStyles';
 
-export default function HomeScreen({ navigation }) {
-  const Create = () => {
-      navigation.navigate('Create')
-  }
-  const Account = () => {
-    navigation.navigate('Account')
-  }
+const todoRef = firebase.firestore().collection("todos");
+
+const HomeScreen = ({navigation}) => {
+
+  const [todos, setTodos] = useState([]);
+
+    useEffect(() => {
+      const unsubscribe = todoRef.onSnapshot((querySnapshot) => {
+        const newTodos = [];
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+
+          newTodos.push(data);
+        });
+        setTodos(newTodos);
+      });
+
+    return () => unsubscribe();
+  }, []);
+
   return (
-    <View>
-       <TouchableOpacity onPress={Create}>
-            <View >
-                <Text>Создать встречу</Text>
-            </View>
+    <View style={gStyle.main}>
+      <View style={gStyle.album}>
+        <TouchableOpacity onPress={() => navigation.navigate('Create')} style={gStyle.buttoncreat}>
+          <Text style={gStyle.textbutton}>Создать встречу</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={Account}>
+        <TouchableOpacity onPress={() => navigation.navigate('Account')} style={gStyle.album}>
+          <Image source={require('../assets/acc.png')} style={{height:'110%', width:'40%'}}/>
+        </TouchableOpacity>
+      </View>
+      <Text style={gStyle.Textpole}>Доступные встречи</Text>
+        <SafeAreaView>
           <View>
-            <Text>Профиль</Text>
+              <FlatList
+              data={todos}
+              numColumns={1}
+              renderItem={({ item }) => (
+                  <Pressable>
+                  <TouchableOpacity onPress={() => navigation.navigate('FullInfo', item)} style={gStyle.pole}>
+                      <View>
+                      <Text style={gStyle.Textpole}>{item.FIO} {item.Komp}</Text>
+                      <Text style={gStyle.Textpole}>{item.Dolg}</Text>
+                      <Text style={gStyle.Textpole}>{item.Sphere}</Text>
+                      <Text style={gStyle.Textpole}>{item.Time}</Text>
+                      </View>
+                  </TouchableOpacity>
+                  </Pressable>
+              )}
+              />
           </View>
-        </TouchableOpacity>
+      </SafeAreaView>
     </View>
   );
 }
+
+export default HomeScreen
