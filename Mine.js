@@ -7,6 +7,22 @@ const todoRef = firebase.firestore().collection("Mine");
 
 const Mine = ({navigation}) => {
 
+  const [todos, setTodos] = useState([]);
+
+    useEffect(() => {
+      const unsubscribe = todoRef.onSnapshot((querySnapshot) => {
+        const newTodos = [];
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+
+          newTodos.push(data);
+        });
+        setTodos(newTodos);
+      });
+
+    return () => unsubscribe();
+  }, []);
+
   return (
     <View style={gStyle.main}>
         <SafeAreaView>
@@ -18,11 +34,11 @@ const Mine = ({navigation}) => {
                   <Pressable>
                   <TouchableOpacity onPress={() => navigation.navigate('FullInfo', item)} style={gStyle.pole}>
                       <View>
-                        <Text style={gStyle.Textpole}>{item.FIO} {item.Komp}</Text>
-                        <Text style={gStyle.Textpole}>{item.Dolg}</Text>
-                        <Text style={gStyle.Textpole}>{item.Sphere}</Text>
-                        <Text style={gStyle.Textpole}>{item.Time}</Text>
-                        <Text style={gStyle.Textpole}>{item.Table}</Text>
+                      <Text style={gStyle.Textpole}>{item.FIO} {item.Komp}</Text>
+                      <Text style={gStyle.Textpole}>{item.Dolg}</Text>
+                      <Text style={gStyle.Textpole}>{item.Sphere}</Text>
+                      <Text style={gStyle.Textpole}>{item.Time}</Text>
+                      <Text>{item.Table}</Text>
                       </View>
                   </TouchableOpacity>
                   </Pressable>
