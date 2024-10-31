@@ -10,7 +10,6 @@ import Registration from "./scr/Registration";
 import Create from "./scr/Create";
 import Account from "./scr/Account";
 import Mine from "./scr/Mine";
-import Scheduled from "./scr/Scheduled";
 
 const Stack = createNativeStackNavigator();
 
@@ -74,11 +73,6 @@ function App(){
       component={Mine}
       options={{title: ' '}}
       />
-      <Stack.Screen
-      name="Scheduled"
-      component={Scheduled}
-      options={{title: ' '}}
-      />  
     </Stack.Navigator>
 
 
